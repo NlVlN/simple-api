@@ -1,13 +1,10 @@
 import os
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 
-hello_msg = str(os.getenv("SERVER_HELLO"))
+hello_msg = os.getenv("SERVER_HELLO")
 
 app = FastAPI()
-
-if hello_msg is None:
-    raise ValueError("SERVER_HELLO environment variable is not set")
 
 
 @app.get("/health-check")
@@ -17,4 +14,9 @@ def health_check():
 
 @app.get("/hello-world")
 def hello_world():
+    if not hello_msg:
+        raise HTTPException(
+            status_code=500, detail="SERVER_HELLO environment variable is not set"
+        )
+
     return hello_msg
