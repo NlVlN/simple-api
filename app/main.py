@@ -1,6 +1,20 @@
-def main():
-    print("Hello from simple-api!")
+import os
+
+from fastapi import FastAPI
+
+hello_msg = str(os.getenv("SERVER_HELLO"))
+
+app = FastAPI()
+
+if hello_msg is None:
+    raise ValueError("SERVER_HELLO environment variable is not set")
 
 
-if __name__ == "__main__":
-    main()
+@app.get("/health-check")
+def health_check():
+    return {"status": "ok"}
+
+
+@app.get("/hello-world")
+def hello_world():
+    return hello_msg
